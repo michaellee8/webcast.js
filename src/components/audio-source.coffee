@@ -35,7 +35,8 @@ if typeof window != "undefined"
       if encoder instanceof Webcast.Recorder
         options.recorderSource = context.createMediaStreamDestination()
         node.connect options.recorderSource
-        encoder.start options.recoderSource.stream, (data) ->
+
+        encoder.start options.recorderSource.stream, (data) ->
           options.socket?.sendData(data) if data?
 
       options.encoder = encoder
@@ -48,16 +49,11 @@ if typeof window != "undefined"
       options.recorderSource?.disconnect()
       options.recorderSource = null
 
-      fn = ->
+      options.encoder.close (data) ->
+        options.socket?.sendData data if data?
         options.socket?.close()
         options.socket = options.encoder = null
         cb?()
-
-      return fn() unless options.encoder?.close?
-
-      options.encoder.close (data) ->
-        options.socket?.sendData data
-        fn()
 
     node.sendMetadata = (metadata) =>
       options.socket?.sendMetadata metadata

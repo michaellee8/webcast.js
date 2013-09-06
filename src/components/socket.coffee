@@ -19,14 +19,14 @@ Webcast.Socket = ({url, mime, info}) ->
       data: hello
     )
 
-  # This method takes ArrayBuffer or any TypedArray
+  # This method takes Blob, ArrayBuffer or any TypedArray
 
   socket.sendData = (data) ->
     return unless socket.isOpen()
 
-    return unless data and data.length > 0
+    return unless data?
 
-    unless data instanceof ArrayBuffer
+    if data.length? and data.buffer?
       data = data.buffer.slice data.byteOffset, data.length*data.BYTES_PER_ELEMENT
 
     send.call socket, data
